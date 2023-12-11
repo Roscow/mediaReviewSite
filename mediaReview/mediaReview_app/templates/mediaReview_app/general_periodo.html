@@ -1,0 +1,55 @@
+{% extends  'mediaReview_app/base.html' %}
+
+{% block contenido %}
+    <h2>Mostrando analisis general ultimos 10 dias"</h2>
+    <canvas id="graficoLinea"></canvas>    
+{% endblock %}
+
+
+
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Datos del gráfico (puedes ajustar estos valores según tus necesidades)
+        var fechas_ultimos_10_dias = {{ fechas_ultimos_10_dias_json|safe }};
+        var porcentajesRojo  = {{ lista_negativas_json|safe }};
+        var porcentajesAzul = {{ lista_positivas_json|safe }};
+
+        var datos = {
+            labels: fechas_ultimos_10_dias,
+            datasets: [
+                {
+                    label: 'Negativo',
+                    borderColor: 'red',
+                    data: porcentajesRojo,
+                }, 
+                {
+                    label: 'Positivo',
+                    borderColor: 'blue',
+                    data: porcentajesAzul,
+                }, 
+            ]
+        };
+
+        // Configuración del gráfico
+        var configuracion = {
+            type: 'line',
+            data: datos,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        min:0,
+                        max:100
+                    }
+                }
+            }
+        };
+
+        // Obtén el contexto del lienzo (canvas)
+        var contexto = document.getElementById('graficoLinea').getContext('2d');
+
+        // Crea el gráfico
+        var miGrafico = new Chart(contexto, configuracion);
+    </script>
+{% endblock  %}

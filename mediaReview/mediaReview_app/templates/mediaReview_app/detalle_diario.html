@@ -1,0 +1,33 @@
+{% extends  'mediaReview_app/base.html' %}
+
+{% block contenido %}
+    <h1>Detalles para "{{medio_obj}}" en     {{fecha}}</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Titular</th>
+                <th scope="col">Contexto</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for n in noticias %}
+                <tr 
+                {% if n.contexto|stringformat:"s" == 'negativo' %}
+                    class="table-danger"
+                {% endif %}
+                {% if n.contexto|stringformat:"s" == 'positivo' %}
+                    class="table-primary"
+                {% endif %}
+                {% if n.contexto|stringformat:"s" == 'neutro' %}
+                    class="table-light"
+                {% endif %}
+
+                >
+                    <td>{{n.titular}}</td>
+                    <td>{{n.contexto|capfirst}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+{% endblock %}

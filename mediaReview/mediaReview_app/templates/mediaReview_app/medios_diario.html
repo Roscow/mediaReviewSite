@@ -1,0 +1,154 @@
+{% extends  'mediaReview_app/base.html' %}
+
+{% block contenido %}
+    <h1>Analisis diario de titulares</h1>
+      <br>
+        <form class="row" method="post" action="{% url 'analisis_medios' fecha='2023-12-10' %}">
+            {% csrf_token %}
+            <div class="col-auto">
+              <input  type="date" name="fecha_date" id="datepicker" class="form-control" value="{{fecha}}" max="{{fecha_actual|date:"Y-m-d"}}">
+            </div>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-primary mb-3">Buscar</button>
+              
+            </div>
+        </form>
+    <br>  
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Grafico
+            </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                  <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">Medio</th>
+                          <th scope="col">Evolucion</th>
+                          <th scope="col">Indicador</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                          {% for e in lista_porcentajes %}
+                        <tr>
+                          <td>{{e.medio}}</td>
+                          <td><a href="{% url 'medio_periodo' medio=e.medio.id  %}">Link</a></td>
+                          <td>
+                              <div class="progress-stacked">
+                                  <div class="progress" role="progressbar" aria-label="Segment one" aria-valuenow="{{e.per_buenas}}" aria-valuemin="0" aria-valuemax="100" style="width: {{e.per_buenas}}%">
+                                    <div class="progress-bar">{{e.per_buenas}}%</div>
+                                  </div>
+                                  <div class="progress" role="progressbar" aria-label="Segment two" aria-valuenow="{{e.per_malas}}" aria-valuemin="0" aria-valuemax="100" style="width: {{e.per_malas}}%">
+                                    <div class="progress-bar bg-danger">{{e.per_malas}}%</div>
+                                  </div>
+                                  <div class="progress" role="progressbar" aria-label="Segment three" aria-valuenow="{{e.per_neutra}}" aria-valuemin="0" aria-valuemax="100" style="width: {{e.per_neutra}}%">
+                                      <div class="progress-bar bg-info">{{e.per_neutra}}%</div>
+                                  </div>
+                              </div>
+                          </td>
+                          <td>{{e.total}}</td>
+                        </tr>
+                  {% endfor %}
+                      </tbody>
+                    </table>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Detalle Datos obtenidos
+            </button>
+          </h2>
+          <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Medio</th>
+                        <th scope="col">Positivo</th>
+                        <th scope="col">Negativo</th>
+                        <th scope="col">Neutro</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Scraping</th>
+                        <th scope="col">Titulares</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in analisis_diarios %}
+                            <tr>
+                                <td>{{e.medio}}</td>
+                                <td>{{e.buenas}}</td>
+                                <td>{{e.malas}}</td>
+                                <td>{{e.neutra}}</td>
+                                <td>{{e.total}}</td>
+                                <td>{{e.data_scraping}}</td>   
+                                <td><a href="{% url 'detalle_diario' fecha=fecha medio=e.medio.id  %}">Link</a></td>    
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+            
+                  </table>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                Analisis general
+            </button>
+          </h2>
+          <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                Datos 
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Positivo</th>
+                        <th scope="col">Negativo</th>
+                        <th scope="col">Neutro</th>
+                        <th scope="col">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in analisis_general %}
+                            <tr>
+                                <td>{{e.buenas}}</td>
+                                <td>{{e.malas}}</td>
+                                <td>{{e.neutra}}</td>
+                                <td>{{e.total}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                  </table>
+                Grafico
+                {% for e in lista_general_porcentajes %}
+                <div class="progress-stacked">
+                    <div class="progress" role="progressbar" aria-label="Segment one" aria-valuenow="{{e.buenas}}" aria-valuemin="0" aria-valuemax="100" style="width: {{e.buenas}}%">
+                      <div class="progress-bar">{{ e.buenas }}%</div>
+                    </div>
+                    <div class="progress" role="progressbar" aria-label="Segment two" aria-valuenow="{{e.malas}}" aria-valuemin="0" aria-valuemax="100" style="width: {{e.malas}}%">
+                      <div class="progress-bar bg-danger">{{e.malas}}%</div>
+                    </div>
+                    <div class="progress" role="progressbar" aria-label="Segment three" aria-valuenow="{{e.neutra}}" aria-valuemin="0" aria-valuemax="100" style="width: {{e.neutra}}%">
+                        <div class="progress-bar bg-info">{{e.neutra}}%</div>
+                    </div>
+                </div>
+                  <br>
+                  <a href="{% url 'general_periodo' %}">Ver en un periodo</a>
+                  <br>
+                {% endfor  %}
+                
+            </div>
+          </div>
+        </div>
+        <br>
+      </div>
+{% endblock %}
+
+
+
+

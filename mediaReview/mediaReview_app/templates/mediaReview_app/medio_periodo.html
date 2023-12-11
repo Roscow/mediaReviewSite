@@ -1,0 +1,93 @@
+{% extends  'mediaReview_app/base.html' %}
+
+{% block contenido %}
+    <h1>Mostrando periodo en "{{medio}}"</h1>
+    <br>
+    <h2>Evolucion de contexto</h2>
+    <canvas id="graficoLinea"></canvas>
+    <br>
+    <h2>Datos de scraping</h2>
+    <canvas id="graficoLinea2"></canvas>
+    <br>
+    <br>
+{% endblock %}
+
+
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Datos del gráfico (puedes ajustar estos valores según tus necesidades)
+        var fechas_ultimos_10_dias = {{ fechas_ultimos_10_dias_json|safe }};
+        var porcentajesRojo  = {{ lista_negativas_json|safe }};
+        var porcentajesAzul = {{ lista_positivas_json|safe }};
+        var datos = {
+            labels: fechas_ultimos_10_dias,
+            datasets: [
+                {
+                    label: 'Negativo',
+                    borderColor: 'red',
+                    data: porcentajesRojo,
+                }, 
+                {
+                    label: 'Positivo',
+                    borderColor: 'blue',
+                    data: porcentajesAzul,
+                }, 
+            ]
+        };
+
+        // Configuración del gráfico
+        var configuracion = {
+            type: 'line',
+            data: datos,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        min:0,
+                        max:100
+                    }
+                }
+            }
+        };
+        var contexto = document.getElementById('graficoLinea').getContext('2d');
+        var miGrafico = new Chart(contexto, configuracion);
+
+
+
+        // Datos del gráfico (puedes ajustar estos valores según tus necesidades)
+        var fechas_ultimos_10_dias = {{ fechas_ultimos_10_dias_json|safe }};
+        var datos_scraping  = {{ lista_scraping_json|safe }};
+        var datos2 = {
+            labels: fechas_ultimos_10_dias,
+            datasets: [
+                {
+                    label: 'Elementos',
+                    borderColor: 'yellow',
+                    data: datos_scraping,
+                }
+            ]
+        };
+
+        // Configuración del gráfico
+        var configuracion2 = {
+            type: 'line',
+            data: datos2,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        min:0
+                    }
+                }
+            }
+        };
+
+        var contexto2 = document.getElementById('graficoLinea2').getContext('2d');
+        var miGrafico2 = new Chart(contexto2, configuracion2);
+
+
+
+
+    </script>
+{% endblock  %}
