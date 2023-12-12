@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .models import MedioDiario, Medio,  AnalisisDiario, AnalisisGeneral, Noticia
+from .models import MedioDiario, Medio,  AnalisisDiario, AnalisisGeneral, Noticia, DeterminacionIa
 from datetime import datetime, timedelta
 import json
 
@@ -115,7 +115,19 @@ def detalle_diario(request,fecha,medio):
     fecha_obj = datetime.strptime(fecha, '%Y-%m-%d').date()
     medio_diario_obj = MedioDiario.objects.get(fecha=fecha_obj,medio=medio)
     noticias = Noticia.objects.filter(medio_diario=medio_diario_obj)
-    context = {'noticias':noticias, 'medio':medio, 'fecha':fecha , 'medio_obj':medio_obj }
+    lista_noticias_completa = list()
+    for n in noticias:
+        try:
+            respuesta = DeterminacionIa.objects.filter(noticia = n)
+            if(len(respuesta)> 0):
+                respuesta = respuesta[0]
+            else:
+                respuesta = ""
+            dic = {'noticia':n , 'respuesta':respuesta }
+            lista_noticias_completa.append(dic)
+        except:
+            True
+    context = {'noticias':noticias, 'medio':medio, 'fecha':fecha , 'medio_obj':medio_obj, 'lista_noticias_completa':lista_noticias_completa }
     return render(request, 'mediaReview_app/detalle_diario.html',context)
 
 

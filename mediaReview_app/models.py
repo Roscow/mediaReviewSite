@@ -78,3 +78,15 @@ class Region(models.Model):
     class Meta:
         managed = False
         db_table = 'region'
+
+
+class DeterminacionIa(models.Model):
+    noticia = models.ForeignKey('Noticia', models.DO_NOTHING, db_column='noticia', blank=True, null=True)
+    respuesta = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.respuesta
+
+    class Meta:
+        managed = False
+        db_table = 'determinacion_ia'

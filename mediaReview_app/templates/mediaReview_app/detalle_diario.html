@@ -1,30 +1,32 @@
 {% extends  'mediaReview_app/base.html' %}
 
 {% block contenido %}
-    <h1>Detalles para "{{medio_obj}}" en     {{fecha}}</h1>
+        <h1>Detalles V2 para "{{medio_obj}}" en     {{fecha}}</h1>
         <table class="table">
             <thead>
             <tr>
                 <th scope="col">Titular</th>
+                <th scope="col">Respuesta IA</th>
                 <th scope="col">Contexto</th>
             </tr>
             </thead>
             <tbody>
-                {% for n in noticias %}
+                {% for n in lista_noticias_completa %}
                 <tr 
-                {% if n.contexto|stringformat:"s" == 'negativo' %}
+                {% if n.noticia.contexto|stringformat:"s" == 'negativo' %}
                     class="table-danger"
                 {% endif %}
-                {% if n.contexto|stringformat:"s" == 'positivo' %}
+                {% if n.noticia.contexto|stringformat:"s" == 'positivo' %}
                     class="table-primary"
                 {% endif %}
-                {% if n.contexto|stringformat:"s" == 'neutro' %}
+                {% if n.noticia.contexto|stringformat:"s" == 'neutro' %}
                     class="table-light"
                 {% endif %}
 
                 >
-                    <td>{{n.titular}}</td>
-                    <td>{{n.contexto|capfirst}}</td>
+                    <td>{{n.noticia.titular}}</td>
+                    <td>{{n.respuesta}}</td>
+                    <td>{{n.noticia.contexto|capfirst}}</td>
                 </tr>
                 {% endfor %}
             </tbody>
